@@ -1,4 +1,4 @@
-package com.atapia.apirfds2.Bussines.Person.ResponseObject;
+package com.atapia.apirfds2.Services.Person.ResponseObject;
 
 public class ResponseGetData {
     public String firstName;

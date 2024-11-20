@@ -1,4 +1,4 @@
-package com.atapia.apirfds2.Bussines.Person.RequestObject;
+package com.atapia.apirfds2.Services.Person.RequestObject;
 
 //import java.util.Date;
 

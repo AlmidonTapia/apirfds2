@@ -1,4 +1,4 @@
-package com.atapia.apirfds2.Bussines.Person;
+package com.atapia.apirfds2.Services.Person;
 
 import java.text.SimpleDateFormat;
 
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.atapia.apirfds2.Bussines.Person.ResponseObject.ResponseGetData;
 import com.atapia.apirfds2.Dto.DtoPerson;
-import com.atapia.apirfds2.Bussines.Person.RequestObject.RequestInsert;
+import com.atapia.apirfds2.Services.Person.RequestObject.RequestInsert;
+import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseGetData;
 
 @RestController
 @RequestMapping("person")
