@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -60,7 +59,7 @@ public class PersonController {
     public ResponseEntity<ResponseGetAll> getAll() {
         ResponseGetAll responseGetAll = new ResponseGetAll();
 
-        List<DtoPerson> listDtoPerson = new BussinesPerson().getAll();
+        List<DtoPerson> listDtoPerson = bussinesPerson.getAll();
 
         for(DtoPerson item: listDtoPerson){
             Map<String, Object> map = new HashMap<>();
@@ -70,8 +69,6 @@ public class PersonController {
             responseGetAll.response.lisTPerson.add(listDtoPerson);
         }
         return new ResponseEntity<>(responseGetAll,HttpStatus.OK);
-
-
 
     }
 
