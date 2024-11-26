@@ -8,4 +8,6 @@ import com.atapia.apirfds2.entity.TPerson;
 @Repository
 public interface PersonRepository extends JpaRepository<TPerson, String> {
 
+    TPerson findByDni(String dni);
+
 }
