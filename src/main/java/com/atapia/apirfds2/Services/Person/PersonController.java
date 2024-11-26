@@ -94,9 +94,9 @@ public class PersonController {
 
             dtoPerson.setFirstName(request.getFirstName());
             dtoPerson.setSurName(request.getSurName());
-            dtoPerson.setDni(dni);
+            dtoPerson.setDni(request.getDni());
             dtoPerson.setGender(request.isGender());
-            dtoPerson.setBirthDate(new SimpleDateFormat("dd-MM-yyyy").parse(request.getBirthDate()));
+            dtoPerson.setBirthDate(new SimpleDateFormat("yyyy-mm-dd").parse(request.getBirthDate()));
 
             bussinesPerson.update(dtoPerson);
 
