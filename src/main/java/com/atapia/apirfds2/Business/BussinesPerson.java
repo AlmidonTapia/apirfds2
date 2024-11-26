@@ -1,6 +1,8 @@
 package com.atapia.apirfds2.Business;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +34,24 @@ public class BussinesPerson {
         tPerson.setUpdatedAt(dtoPerson.getUpdatedAt());
 
         personRepository.save(tPerson);
+    }
+    public List<DtoPerson> getAll(){
+        List<TPerson> lisTPerson = personRepository.findAll();
+        
+        List<DtoPerson> listDtoPerson = new ArrayList<>();
+
+        for (TPerson item :lisTPerson){
+            DtoPerson dtoPerson = new DtoPerson();
+            dtoPerson.setIdPerson(item.getIdPerson());
+            dtoPerson.setFirstName(item.getFirstName());
+            dtoPerson.setSurName(item.getSurName());
+            dtoPerson.setDni(item.getDni());
+            dtoPerson.setGender(item.isGender());
+            dtoPerson.setBirthDate(item.getBirthDate());
+            dtoPerson.setCreatedAt(item.getCreatedAt());
+            dtoPerson.setUpdatedAt(item.getUpdatedAt());
+            listDtoPerson.add(dtoPerson);
+        }
+                return listDtoPerson;
     }
 }

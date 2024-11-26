@@ -1,9 +1,13 @@
 package com.atapia.apirfds2.Services.Person;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.atapia.apirfds2.Business.BussinesPerson;
 import com.atapia.apirfds2.Dto.DtoPerson;
 import com.atapia.apirfds2.Services.Person.RequestObject.RequestInsert;
+import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseGetAll;
 import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseGetData;
 
 @RestController
@@ -49,6 +54,25 @@ public class PersonController {
         }
 
         return new ResponseEntity<>("Person inserted", HttpStatus.OK);
+    }
+    
+    @GetMapping(path = "getAll")
+    public ResponseEntity<ResponseGetAll> getAll() {
+        ResponseGetAll responseGetAll = new ResponseGetAll();
+
+        List<DtoPerson> listDtoPerson = new BussinesPerson().getAll();
+
+        for(DtoPerson item: listDtoPerson){
+            Map<String, Object> map = new HashMap<>();
+            map.put("firstName", item.getFirstName());
+            map.put("surName", item.getSurName());
+            map.put("dni", item.getDni());
+            responseGetAll.response.lisTPerson.add(listDtoPerson);
+        }
+        return new ResponseEntity<>(responseGetAll,HttpStatus.OK);
+
+
+
     }
 
 }
