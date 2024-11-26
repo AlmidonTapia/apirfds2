@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.atapia.apirfds2.Business.BussinesPerson;
@@ -22,11 +23,10 @@ import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseGetData;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @RestController
 @RequestMapping("person")
 public class PersonController {
-    
+
     @Autowired
     private BussinesPerson bussinesPerson;
 
@@ -57,36 +57,36 @@ public class PersonController {
         }
 
         return new ResponseEntity<>("Person inserted", HttpStatus.OK);
-        }
+    }
 
     @GetMapping(path = "get/{dni}")
     public ResponseEntity<ResponseGetData> getPersonByDni(@PathVariable String dni) {
-    try {
-        DtoPerson dtoPerson = bussinesPerson.getByDni(dni);
-        if (dtoPerson == null) {
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        try {
+            DtoPerson dtoPerson = bussinesPerson.getByDni(dni);
+            if (dtoPerson == null) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            ResponseGetData responseGetData = new ResponseGetData();
+            responseGetData.firstName = dtoPerson.getFirstName();
+            responseGetData.surName = dtoPerson.getSurName();
+            responseGetData.dni = dtoPerson.getDni();
+            return new ResponseEntity<>(responseGetData, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        ResponseGetData responseGetData = new ResponseGetData();
-        responseGetData.firstName = dtoPerson.getFirstName();
-        responseGetData.surName = dtoPerson.getSurName();
-        responseGetData.dni = dtoPerson.getDni();
-        return new ResponseEntity<>(responseGetData, HttpStatus.OK);
-    } catch (Exception e) {
-        e.printStackTrace();
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
     }
 
     @DeleteMapping(path = "delete/{dni}")
     public ResponseEntity<String> delete(@PathVariable String dni) {
-    try {
-        bussinesPerson.deleteByDni(dni);
-    } catch (Exception e) {
-        e.printStackTrace();
-        return new ResponseEntity<>("Error deleting person", HttpStatus.INTERNAL_SERVER_ERROR);
+        try {
+            bussinesPerson.deleteByDni(dni);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Error deleting person", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>("Person deleted", HttpStatus.OK);
     }
-    return new ResponseEntity<>("Person deleted", HttpStatus.OK);
-}
 
     @PutMapping(path = "update/{dni}", consumes = "multipart/form-data")
     public ResponseEntity<String> update(@PathVariable String dni, @RequestBody RequestInsert request) {
@@ -108,13 +108,13 @@ public class PersonController {
 
         return new ResponseEntity<>("Person updated", HttpStatus.OK);
     }
-    
+
     @GetMapping(path = "list")
     public ResponseEntity<List<ResponseGetData>> listAllPersons() {
         try {
             List<DtoPerson> dtoPersons = bussinesPerson.getAll();
             List<ResponseGetData> responseList = new ArrayList<>();
-            
+
             for (DtoPerson dtoPerson : dtoPersons) {
                 ResponseGetData responseGetData = new ResponseGetData();
                 responseGetData.firstName = dtoPerson.getFirstName();
@@ -122,7 +122,7 @@ public class PersonController {
                 responseGetData.dni = dtoPerson.getDni();
                 responseList.add(responseGetData);
             }
-            
+
             return new ResponseEntity<>(responseList, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
