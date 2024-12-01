@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ResponseGetAll {
- public class Response{
-    public List<Object> lisTPerson = new ArrayList<>();
- }
- public Response response = new Response();
+   public class Response {
+      public List<Object> listPerson = new ArrayList<>();
+   }
+
+   public Response response = new Response();
 }

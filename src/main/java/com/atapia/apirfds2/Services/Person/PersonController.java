@@ -61,15 +61,22 @@ public class PersonController {
 
         List<DtoPerson> listDtoPerson = bussinesPerson.getAll();
 
-        for(DtoPerson item: listDtoPerson){
+        for (DtoPerson item : listDtoPerson) {
             Map<String, Object> map = new HashMap<>();
+
+            map.put("idPerson", item.getIdPerson());
             map.put("firstName", item.getFirstName());
             map.put("surName", item.getSurName());
             map.put("dni", item.getDni());
-            responseGetAll.response.lisTPerson.add(listDtoPerson);
-        }
-        return new ResponseEntity<>(responseGetAll,HttpStatus.OK);
+            map.put("gender", item.isGender());
+            map.put("birthDate", item.getBirthDate());
+            map.put("createdAt", item.getCreatedAt());
+            map.put("updatedAt", item.getUpdatedAt());
 
+            responseGetAll.response.listPerson.add(map);
+        }
+
+        return new ResponseEntity<>(responseGetAll, HttpStatus.OK);
     }
 
 }

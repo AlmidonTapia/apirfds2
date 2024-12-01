@@ -16,6 +16,4 @@ public class DtoPerson {
     private Date birthDate;
     private Date createdAt;
     private Date updatedAt;
-
-    
 }

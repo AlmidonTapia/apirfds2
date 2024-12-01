@@ -35,13 +35,15 @@ public class BussinesPerson {
 
         personRepository.save(tPerson);
     }
-    public List<DtoPerson> getAll(){
-        List<TPerson> lisTPerson = personRepository.findAll();
-        
+    
+    public List<DtoPerson> getAll() {
+        List<TPerson> listTPerson = personRepository.findAll();
+
         List<DtoPerson> listDtoPerson = new ArrayList<>();
 
-        for (TPerson item :lisTPerson){
+        for (TPerson item : listTPerson) {
             DtoPerson dtoPerson = new DtoPerson();
+
             dtoPerson.setIdPerson(item.getIdPerson());
             dtoPerson.setFirstName(item.getFirstName());
             dtoPerson.setSurName(item.getSurName());
@@ -50,8 +52,10 @@ public class BussinesPerson {
             dtoPerson.setBirthDate(item.getBirthDate());
             dtoPerson.setCreatedAt(item.getCreatedAt());
             dtoPerson.setUpdatedAt(item.getUpdatedAt());
+
             listDtoPerson.add(dtoPerson);
         }
-                return listDtoPerson;
+
+        return listDtoPerson;
     }
 }
