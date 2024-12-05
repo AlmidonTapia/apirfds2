@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,5 +58,18 @@ public class BussinesPerson {
         }
 
         return listDtoPerson;
+    }
+    
+    public Boolean delete(String idPerson) {
+        Optional<TPerson> tPerson = personRepository.findById(idPerson);
+        try {
+            if(tPerson.isPresent()) {
+                personRepository.deleteById(idPerson);
+                return true;
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
     }
 }
