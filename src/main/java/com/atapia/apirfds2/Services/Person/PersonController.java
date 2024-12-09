@@ -19,15 +19,17 @@ import org.springframework.web.bind.annotation.RestController;
 import com.atapia.apirfds2.Business.BussinesPerson;
 import com.atapia.apirfds2.Dto.DtoPerson;
 import com.atapia.apirfds2.Services.Person.RequestObject.RequestInsert;
+import com.atapia.apirfds2.Services.Person.RequestObject.RequestUpdate;
 import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseGetAll;
 import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseGetData;
 
 @RestController
 @RequestMapping("person")
 public class PersonController {
-    
+
     @Autowired
     private BussinesPerson bussinesPerson;
+
     @GetMapping(path = "getdata")
     public ResponseEntity<ResponseGetData> getdData() {
         ResponseGetData responseGetData = new ResponseGetData();
@@ -56,7 +58,7 @@ public class PersonController {
 
         return new ResponseEntity<>("Person inserted", HttpStatus.OK);
     }
-    
+
     @GetMapping(path = "getAll")
     public ResponseEntity<ResponseGetAll> getAll() {
         ResponseGetAll responseGetAll = new ResponseGetAll();
@@ -83,9 +85,31 @@ public class PersonController {
 
     @DeleteMapping(path = "delete/{idPerson}")
     public ResponseEntity<Boolean> delete(@PathVariable String idPerson) {
-          bussinesPerson.delete(idPerson);
-        
+        bussinesPerson.delete(idPerson);
+
         return new ResponseEntity<>(bussinesPerson.delete(idPerson), HttpStatus.OK);
+    }
+
+    @PostMapping(path = "update", consumes = { "multipart/form-data" })
+    public ResponseEntity<String> actionUpdate(@ModelAttribute   RequestUpdate requestUpdate) {
+
+        try {
+            DtoPerson dtoPerson = new DtoPerson();
+
+            dtoPerson.setIdPerson(requestUpdate.getIdPerson());
+            dtoPerson.setFirstName(requestUpdate.getFirstName());
+            dtoPerson.setSurName(requestUpdate.getSurName());
+            dtoPerson.setDni(requestUpdate.getDni());
+            dtoPerson.setGender(requestUpdate.isGender());
+            dtoPerson.setBirthDate(new SimpleDateFormat("yyyy-MM-dd").parse(requestUpdate.getBirthDate()));
+
+            bussinesPerson.update(dtoPerson);
+
+            return new ResponseEntity<>("Person update", HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

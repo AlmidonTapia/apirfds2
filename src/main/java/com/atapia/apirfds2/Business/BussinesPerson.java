@@ -72,4 +72,26 @@ public class BussinesPerson {
         }
         return false;
     }
+
+    public boolean update(DtoPerson dtoPerson) {
+        dtoPerson.setUpdatedAt(new Date());
+
+        Optional<TPerson> optionTPeson = personRepository.findById(dtoPerson.getIdPerson());
+
+        if (!optionTPeson.isPresent()) {
+            return false;
+        }
+
+        optionTPeson.get().setFirstName(dtoPerson.getFirstName());
+        optionTPeson.get().setSurName(dtoPerson.getSurName());
+        optionTPeson.get().setDni(dtoPerson.getDni());
+        optionTPeson.get().setGender(dtoPerson.isGender());
+        optionTPeson.get().setBirthDate(dtoPerson.getBirthDate());
+        optionTPeson.get().setUpdatedAt(dtoPerson.getUpdatedAt());
+
+        personRepository.save(optionTPeson.get());
+
+        return true;
+    }
+
 }
