@@ -13,11 +13,14 @@ import com.atapia.apirfds2.Dto.DtoPerson;
 import com.atapia.apirfds2.entity.TPerson;
 import com.atapia.apirfds2.repository.PersonRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class BussinesPerson {
     @Autowired
     private PersonRepository personRepository;
 
+    @Transactional
     public void insert(DtoPerson dtoPerson) {
         dtoPerson.setIdPerson(UUID.randomUUID().toString());
         dtoPerson.setCreatedAt(new Date());
@@ -60,6 +63,7 @@ public class BussinesPerson {
         return listDtoPerson;
         }
         
+        @Transactional
         public Boolean delete(String idPerson) {
         Optional<TPerson> tPerson = personRepository.findById(idPerson);
         if (tPerson.isPresent()) {
@@ -69,11 +73,10 @@ public class BussinesPerson {
         return false;
         }
 
+        @Transactional
         public boolean update(DtoPerson dtoPerson) {
         dtoPerson.setUpdatedAt(new Date());
-
         Optional<TPerson> optionTPeson = personRepository.findById(dtoPerson.getIdPerson());
-
         if (!optionTPeson.isPresent()) {
             return false;
         }
