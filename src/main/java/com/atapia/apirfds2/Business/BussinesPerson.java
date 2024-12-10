@@ -58,22 +58,18 @@ public class BussinesPerson {
         }
 
         return listDtoPerson;
-    }
-    
-    public Boolean delete(String idPerson) {
+        }
+        
+        public Boolean delete(String idPerson) {
         Optional<TPerson> tPerson = personRepository.findById(idPerson);
-        try {
-            if(tPerson.isPresent()) {
-                personRepository.deleteById(idPerson);
-                return true;
-            }
-        } catch (Exception e) {
-            return false;
+        if (tPerson.isPresent()) {
+            personRepository.deleteById(idPerson);
+            return true;
         }
         return false;
-    }
+        }
 
-    public boolean update(DtoPerson dtoPerson) {
+        public boolean update(DtoPerson dtoPerson) {
         dtoPerson.setUpdatedAt(new Date());
 
         Optional<TPerson> optionTPeson = personRepository.findById(dtoPerson.getIdPerson());

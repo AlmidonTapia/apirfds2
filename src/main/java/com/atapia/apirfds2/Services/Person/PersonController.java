@@ -33,9 +33,15 @@ public class PersonController {
     @GetMapping(path = "getdata")
     public ResponseEntity<ResponseGetData> getdData() {
         ResponseGetData responseGetData = new ResponseGetData();
+
+        try{
         responseGetData.firstName = "Saul";
         responseGetData.surName = "Tapia Almdion";
         responseGetData.dni = "73534380";
+        }catch(Exception e){
+            e.printStackTrace();
+            
+        }
         return new ResponseEntity<>(responseGetData, HttpStatus.OK);
     }
 
@@ -57,15 +63,16 @@ public class PersonController {
         }
 
         return new ResponseEntity<>("Person inserted", HttpStatus.OK);
-    }
+        }
 
-    @GetMapping(path = "getAll")
-    public ResponseEntity<ResponseGetAll> getAll() {
+        @GetMapping(path = "getAll")
+        public ResponseEntity<ResponseGetAll> getAll() {
         ResponseGetAll responseGetAll = new ResponseGetAll();
 
-        List<DtoPerson> listDtoPerson = bussinesPerson.getAll();
+        try {
+            List<DtoPerson> listDtoPerson = bussinesPerson.getAll();
 
-        for (DtoPerson item : listDtoPerson) {
+            for (DtoPerson item : listDtoPerson) {
             Map<String, Object> map = new HashMap<>();
 
             map.put("idPerson", item.getIdPerson());
@@ -78,15 +85,21 @@ public class PersonController {
             map.put("updatedAt", item.getUpdatedAt());
 
             responseGetAll.response.listPerson.add(map);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return new ResponseEntity<>(responseGetAll, HttpStatus.OK);
-    }
+        }
 
-    @DeleteMapping(path = "delete/{idPerson}")
-    public ResponseEntity<Boolean> delete(@PathVariable String idPerson) {
-        bussinesPerson.delete(idPerson);
-
+        @DeleteMapping(path = "delete/{idPerson}")
+        public ResponseEntity<Boolean> delete(@PathVariable String idPerson) {
+        try {
+            bussinesPerson.delete(idPerson);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return new ResponseEntity<>(bussinesPerson.delete(idPerson), HttpStatus.OK);
     }
 
@@ -105,11 +118,11 @@ public class PersonController {
 
             bussinesPerson.update(dtoPerson);
 
-            return new ResponseEntity<>("Person update", HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+            return new ResponseEntity<>("Person update", HttpStatus.OK);
+
     }
 
 }
