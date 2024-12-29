@@ -64,13 +64,14 @@ public class BussinesPerson {
         }
         
         @Transactional
-        public Boolean delete(String idPerson) {
-        Optional<TPerson> tPerson = personRepository.findById(idPerson);
-        if (tPerson.isPresent()) {
-            personRepository.deleteById(idPerson);
+        public boolean delete(String idPerson) {
+            Optional<TPerson> tPerson = personRepository.findById(idPerson);
+
+            if (tPerson.isPresent()) {
+                personRepository.deleteById(idPerson);
+            }
+
             return true;
-        }
-        return false;
         }
 
         @Transactional

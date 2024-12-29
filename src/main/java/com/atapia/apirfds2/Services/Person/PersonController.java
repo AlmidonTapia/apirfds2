@@ -8,11 +8,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,15 +20,22 @@ import com.atapia.apirfds2.Business.BussinesPerson;
 import com.atapia.apirfds2.Dto.DtoPerson;
 import com.atapia.apirfds2.Services.Person.RequestObject.RequestInsert;
 import com.atapia.apirfds2.Services.Person.RequestObject.RequestUpdate;
+import com.atapia.apirfds2.Services.Person.ResponseObject.ReponseUpdate;
+import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseDelete;
 import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseGetAll;
 import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseGetData;
+import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseInsert;
+
+//import jakarta.validation.Valid;
+
+import org.springframework.web.bind.annotation.PostMapping;
 
 @RestController
 @RequestMapping("person")
 public class PersonController {
 
     @Autowired
-    private BussinesPerson bussinesPerson;
+    private BussinesPerson businessPerson;
 
     @GetMapping(path = "getdata")
     public ResponseEntity<ResponseGetData> getdData() {
@@ -46,83 +53,117 @@ public class PersonController {
     }
 
     @PostMapping(path = "insert", consumes = "multipart/form-data")
-    public ResponseEntity<String> insert(@ModelAttribute RequestInsert request) {
-        try {
-            DtoPerson dtoPerson = new DtoPerson();
+    public ResponseEntity<ResponseInsert> insert(/*@Valid*/ @ModelAttribute RequestInsert request,
+            BindingResult bindingResult) {
+        ResponseInsert response = new ResponseInsert();
 
-            dtoPerson.setFirstName(request.getFirstName());
-            dtoPerson.setSurName(request.getSurName());
-            dtoPerson.setDni(request.getDni());
-            dtoPerson.setGender(request.isGender());
-            dtoPerson.setBirthDate(new SimpleDateFormat("yyyy-mm-dd").parse(request.getBirthDate()));
+		try {
+			if (bindingResult.hasErrors()) {
+				bindingResult.getAllErrors().forEach(error -> {
+					response.mo.addMessage(error.getDefaultMessage());
+				});
 
-            bussinesPerson.insert(dtoPerson);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+			}
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+			DtoPerson dtoPerson = new DtoPerson();
 
-        return new ResponseEntity<>("Person inserted", HttpStatus.OK);
-        }
+			dtoPerson.setFirstName(request.getFirstName());
+			dtoPerson.setSurName(request.getSurName());
+			dtoPerson.setDni(request.getDni());
+			dtoPerson.setGender(request.isGender());
+			dtoPerson.setBirthDate(new SimpleDateFormat("yyyy-mm-dd").parse(request.getBirthDate()));
 
-        @GetMapping(path = "getAll")
-        public ResponseEntity<ResponseGetAll> getAll() {
-        ResponseGetAll responseGetAll = new ResponseGetAll();
+			businessPerson.insert(dtoPerson);
 
-        try {
-            List<DtoPerson> listDtoPerson = bussinesPerson.getAll();
+			response.mo.addMessage("Registro realizado correctamente");
+			response.mo.setSuccess();
+		} catch (Exception e) {
+			response.mo.addMessage("Ocurrió un error inesperado, estamos trabajando para resolvero. Gracias por su paciencia.");
+			response.mo.setException();
+		}
 
-            for (DtoPerson item : listDtoPerson) {
-            Map<String, Object> map = new HashMap<>();
+		return new ResponseEntity<>(response, HttpStatus.CREATED);
+	}
 
-            map.put("idPerson", item.getIdPerson());
-            map.put("firstName", item.getFirstName());
-            map.put("surName", item.getSurName());
-            map.put("dni", item.getDni());
-            map.put("gender", item.isGender());
-            map.put("birthDate", item.getBirthDate());
-            map.put("createdAt", item.getCreatedAt());
-            map.put("updatedAt", item.getUpdatedAt());
+        	@GetMapping(path = "getall")
+	public ResponseEntity<ResponseGetAll> getAll() {
+		ResponseGetAll response = new ResponseGetAll();
 
-            responseGetAll.response.listPerson.add(map);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		try {
+			List<DtoPerson> listDtoPerson = businessPerson.getAll();
 
-        return new ResponseEntity<>(responseGetAll, HttpStatus.OK);
-        }
+			for (DtoPerson item : listDtoPerson) {
+				Map<String, Object> map = new HashMap<>();
 
-        @DeleteMapping(path = "delete/{idPerson}")
-        public ResponseEntity<Boolean> delete(@PathVariable String idPerson) {
-        try {
-            bussinesPerson.delete(idPerson);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ResponseEntity<>(bussinesPerson.delete(idPerson), HttpStatus.OK);
-    }
+				map.put("idPerson", item.getIdPerson());
+				map.put("firstName", item.getFirstName());
+				map.put("surName", item.getSurName());
+				map.put("dni", item.getDni());
+				map.put("gender", item.isGender());
+				map.put("birthDate", item.getBirthDate());
+				map.put("createdAt", item.getCreatedAt());
+				map.put("updatedAt", item.getUpdatedAt());
+
+				response.dto.listPerson.add(map);
+
+				response.mo.setSuccess();
+			}
+		} catch (Exception e) {
+			response.mo.addMessage("Ocurrió un error inesperado, estamos trabajando para resolvero. Gracias por su paciencia.");
+			response.mo.setException();
+		}
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@DeleteMapping(path = "delete/{idPerson}")
+	public ResponseEntity<ResponseDelete> delete(@PathVariable String idPerson) {
+		ResponseDelete response = new ResponseDelete();
+
+		try {
+			businessPerson.delete(idPerson);
+
+			response.mo.addMessage("Eliminación realizada correctamente");
+			response.mo.setSuccess();
+		} catch (Exception e) {
+			response.mo.addMessage("Ocurrió un error inesperado, estamos trabajando para resolvero. Gracias por su paciencia.");
+			response.mo.setException();
+		}
+
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
     @PostMapping(path = "update", consumes = { "multipart/form-data" })
-    public ResponseEntity<String> actionUpdate(@ModelAttribute   RequestUpdate requestUpdate) {
+	public ResponseEntity<ReponseUpdate> actionUpdate(/* @Valid */@ModelAttribute RequestUpdate requestUpdate,
+			BindingResult bindingResult) {
+		ReponseUpdate response = new ReponseUpdate();
 
-        try {
+		try {
+			if (bindingResult.hasErrors()) {
+				bindingResult.getAllErrors().forEach(error -> {
+					response.mo.addMessage(error.getDefaultMessage());
+				});
+
+				return new ResponseEntity<>(response, HttpStatus.OK);
+			}
             DtoPerson dtoPerson = new DtoPerson();
-
-            dtoPerson.setIdPerson(requestUpdate.getIdPerson());
+            dtoPerson.setIdPerson(requestUpdate.getIdPerson()); // por modificar en principio no se deberian actualizar los id xde
             dtoPerson.setFirstName(requestUpdate.getFirstName());
             dtoPerson.setSurName(requestUpdate.getSurName());
             dtoPerson.setDni(requestUpdate.getDni());
             dtoPerson.setGender(requestUpdate.isGender());
             dtoPerson.setBirthDate(new SimpleDateFormat("yyyy-MM-dd").parse(requestUpdate.getBirthDate()));
 
-            bussinesPerson.update(dtoPerson);
+            businessPerson.update(dtoPerson);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+       response.mo.addMessage("Cambios realizados correctamente");
+			response.mo.setSuccess();
+		} catch (Exception e) {
+			response.mo.addMessage("Ocurrió un error inesperado, estamos trabajando para resolvero. Gracias por su paciencia.");
+			response.mo.setException();
         }
-            return new ResponseEntity<>("Person update", HttpStatus.OK);
-
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }
