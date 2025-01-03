@@ -26,7 +26,7 @@ import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseGetAll;
 import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseGetData;
 import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseInsert;
 
-//import jakarta.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -53,7 +53,7 @@ public class PersonController {
     }
 
     @PostMapping(path = "insert", consumes = "multipart/form-data")
-    public ResponseEntity<ResponseInsert> insert(/*@Valid*/ @ModelAttribute RequestInsert request,
+    public ResponseEntity<ResponseInsert> insert(@Valid @ModelAttribute RequestInsert request,
             BindingResult bindingResult) {
         ResponseInsert response = new ResponseInsert();
 
