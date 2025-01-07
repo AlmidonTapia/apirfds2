@@ -14,6 +14,8 @@ public class DtoPerson {
     private String dni;
     private boolean gender;
     private Date birthDate;
+    private String email;
+    private String password;
     private Date createdAt;
     private Date updatedAt;
 }

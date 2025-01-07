@@ -15,4 +15,6 @@ public class RequestInsert {
     private String dni;
     private boolean gender;
     private String birthDate;
+    private String email;
+    private String password;
 }

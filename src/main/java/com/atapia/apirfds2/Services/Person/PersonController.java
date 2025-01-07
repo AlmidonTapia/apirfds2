@@ -19,16 +19,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.atapia.apirfds2.Business.BussinesPerson;
 import com.atapia.apirfds2.Dto.DtoPerson;
 import com.atapia.apirfds2.Services.Person.RequestObject.RequestInsert;
+import com.atapia.apirfds2.Services.Person.RequestObject.RequestLogin;
 import com.atapia.apirfds2.Services.Person.RequestObject.RequestUpdate;
 import com.atapia.apirfds2.Services.Person.ResponseObject.ReponseUpdate;
 import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseDelete;
 import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseGetAll;
 import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseGetData;
 import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseInsert;
+import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseLogin;
 
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
+
 
 @RestController
 @RequestMapping("person")
@@ -73,6 +76,8 @@ public class PersonController {
 			dtoPerson.setDni(request.getDni());
 			dtoPerson.setGender(request.isGender());
 			dtoPerson.setBirthDate(new SimpleDateFormat("yyyy-mm-dd").parse(request.getBirthDate()));
+			dtoPerson.setEmail(request.getEmail());
+			dtoPerson.setPassword(request.getPassword());
 
 			businessPerson.insert(dtoPerson);
 
@@ -102,6 +107,8 @@ public class PersonController {
 				map.put("dni", item.getDni());
 				map.put("gender", item.isGender());
 				map.put("birthDate", item.getBirthDate());
+				map.put("email", item.getEmail());
+				map.put("password", item.getPassword());
 				map.put("createdAt", item.getCreatedAt());
 				map.put("updatedAt", item.getUpdatedAt());
 
@@ -154,6 +161,8 @@ public class PersonController {
             dtoPerson.setDni(requestUpdate.getDni());
             dtoPerson.setGender(requestUpdate.isGender());
             dtoPerson.setBirthDate(new SimpleDateFormat("yyyy-MM-dd").parse(requestUpdate.getBirthDate()));
+			dtoPerson.setEmail(requestUpdate.getEmail());
+			dtoPerson.setPassword(requestUpdate.getPassword());
 
             businessPerson.update(dtoPerson);
 
@@ -165,5 +174,30 @@ public class PersonController {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+	@PostMapping(path = "login", consumes = { "multipart/form-data" })
+	public ResponseEntity<ResponseLogin> actionLogin(@Valid @ModelAttribute RequestLogin soLogin,
+			BindingResult bindingResult) {
+		ResponseLogin responseLogin = new ResponseLogin();
+
+		DtoPerson dtoPerson = businessPerson.getLogin( soLogin.getEmail(), soLogin.getPassword());
+
+		if (dtoPerson == null) {
+			responseLogin.mo.addMessage("Usuario o contraseña incorrecta.");
+			return new ResponseEntity<>(responseLogin, HttpStatus.OK);
+		}
+
+		Map<String, Object> map = new HashMap<>();
+
+		map.put("idPerson", dtoPerson.getIdPerson());
+		map.put("firstName", dtoPerson.getFirstName());
+
+		responseLogin.dto.person = map;
+		responseLogin.mo.addMessage("Bienvenido(a) al sistema.");
+		responseLogin.mo.setSuccess();
+
+		return new ResponseEntity<>(responseLogin, HttpStatus.OK);
+	}
+	
 
 }

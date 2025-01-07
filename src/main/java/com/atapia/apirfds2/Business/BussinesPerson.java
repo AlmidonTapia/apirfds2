@@ -34,6 +34,8 @@ public class BussinesPerson {
         tPerson.setDni(dtoPerson.getDni());
         tPerson.setGender(dtoPerson.isGender());
         tPerson.setBirthDate(dtoPerson.getBirthDate());
+        tPerson.setEmail(dtoPerson.getEmail());
+        tPerson.setPassword(dtoPerson.getPassword());
         tPerson.setCreatedAt(dtoPerson.getCreatedAt());
         tPerson.setUpdatedAt(dtoPerson.getUpdatedAt());
 
@@ -54,6 +56,8 @@ public class BussinesPerson {
             dtoPerson.setDni(item.getDni());
             dtoPerson.setGender(item.isGender());
             dtoPerson.setBirthDate(item.getBirthDate());
+            dtoPerson.setEmail(item.getEmail());
+            dtoPerson.setPassword(item.getPassword());
             dtoPerson.setCreatedAt(item.getCreatedAt());
             dtoPerson.setUpdatedAt(item.getUpdatedAt());
 
@@ -87,11 +91,30 @@ public class BussinesPerson {
         optionTPeson.get().setDni(dtoPerson.getDni());
         optionTPeson.get().setGender(dtoPerson.isGender());
         optionTPeson.get().setBirthDate(dtoPerson.getBirthDate());
+        optionTPeson.get().setEmail(dtoPerson.getEmail());
+        optionTPeson.get().setPassword(dtoPerson.getPassword());
         optionTPeson.get().setUpdatedAt(dtoPerson.getUpdatedAt());
 
         personRepository.save(optionTPeson.get());
 
         return true;
+    }
+
+    public DtoPerson getLogin (String email, String password) {
+        TPerson tPerson = personRepository.getLogin(email, password);
+
+        if (tPerson == null) {
+            return null;
+        }
+
+        DtoPerson dtoPerson = new DtoPerson();
+
+        dtoPerson.setIdPerson(tPerson.getIdPerson());
+        dtoPerson.setFirstName(tPerson.getFirstName());
+        dtoPerson.setCreatedAt(tPerson.getCreatedAt());
+        dtoPerson.setUpdatedAt(tPerson.getUpdatedAt());
+
+        return dtoPerson;
     }
 
 }

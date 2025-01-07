@@ -36,6 +36,12 @@ public class TPerson implements Serializable {
 	@Column(name = "birthDate")
 	private Date birthDate;
 
+	@Column(name = "email")
+	private String email;
+
+	@Column(name = "password")
+	private String password;
+
 	@Column(name = "createdAt")
 	private Date createdAt;
 
