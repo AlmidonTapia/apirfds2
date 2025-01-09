@@ -1,7 +1,6 @@
 package com.atapia.apirfds2.Business;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,22 +21,18 @@ public class BussinesPerson {
 
     @Transactional
     public void insert(DtoPerson dtoPerson) {
-        dtoPerson.setIdPerson(UUID.randomUUID().toString());
-        dtoPerson.setCreatedAt(new Date());
-        dtoPerson.setUpdatedAt(new Date());
+        if (dtoPerson.getFecha_hora_inicio().compareTo(dtoPerson.getFecha_hora_termino()) >= 0) {
+            throw new IllegalArgumentException("La fecha y hora de inicio no puede ser mayor o igual a la fecha y hora de término");
+        }
+
+        dtoPerson.setIdActividad(UUID.randomUUID().toString());
 
         TPerson tPerson = new TPerson();
 
-        tPerson.setIdPerson(dtoPerson.getIdPerson());
-        tPerson.setFirstName(dtoPerson.getFirstName());
-        tPerson.setSurName(dtoPerson.getSurName());
-        tPerson.setDni(dtoPerson.getDni());
-        tPerson.setGender(dtoPerson.isGender());
-        tPerson.setBirthDate(dtoPerson.getBirthDate());
-        tPerson.setEmail(dtoPerson.getEmail());
-        tPerson.setPassword(dtoPerson.getPassword());
-        tPerson.setCreatedAt(dtoPerson.getCreatedAt());
-        tPerson.setUpdatedAt(dtoPerson.getUpdatedAt());
+        tPerson.setIdActividad(dtoPerson.getIdActividad());
+        tPerson.setNombre(dtoPerson.getNombre());
+        tPerson.setFecha_hora_inicio(dtoPerson.getFecha_hora_inicio());
+        tPerson.setFecha_hora_termino(dtoPerson.getFecha_hora_termino());
 
         personRepository.save(tPerson);
     }
@@ -50,16 +45,10 @@ public class BussinesPerson {
         for (TPerson item : listTPerson) {
             DtoPerson dtoPerson = new DtoPerson();
 
-            dtoPerson.setIdPerson(item.getIdPerson());
-            dtoPerson.setFirstName(item.getFirstName());
-            dtoPerson.setSurName(item.getSurName());
-            dtoPerson.setDni(item.getDni());
-            dtoPerson.setGender(item.isGender());
-            dtoPerson.setBirthDate(item.getBirthDate());
-            dtoPerson.setEmail(item.getEmail());
-            dtoPerson.setPassword(item.getPassword());
-            dtoPerson.setCreatedAt(item.getCreatedAt());
-            dtoPerson.setUpdatedAt(item.getUpdatedAt());
+            dtoPerson.setIdActividad(item.getIdActividad());
+            dtoPerson.setNombre(item.getNombre());
+            dtoPerson.setFecha_hora_inicio(item.getFecha_hora_inicio());
+            dtoPerson.setFecha_hora_termino(item.getFecha_hora_termino());
 
             listDtoPerson.add(dtoPerson);
         }
@@ -68,11 +57,11 @@ public class BussinesPerson {
         }
         
         @Transactional
-        public boolean delete(String idPerson) {
-            Optional<TPerson> tPerson = personRepository.findById(idPerson);
+        public boolean delete(String idActividad) {
+            Optional<TPerson> tPerson = personRepository.findById(idActividad);
 
             if (tPerson.isPresent()) {
-                personRepository.deleteById(idPerson);
+                personRepository.deleteById(idActividad);
             }
 
             return true;
@@ -80,41 +69,18 @@ public class BussinesPerson {
 
         @Transactional
         public boolean update(DtoPerson dtoPerson) {
-        dtoPerson.setUpdatedAt(new Date());
-        Optional<TPerson> optionTPeson = personRepository.findById(dtoPerson.getIdPerson());
-        if (!optionTPeson.isPresent()) {
-            return false;
+            Optional<TPerson> optionTPeson = personRepository.findById(dtoPerson.getIdActividad());
+            if (optionTPeson.isEmpty()) {
+                return false;
+            }
+
+            optionTPeson.get().setNombre(dtoPerson.getNombre());
+            optionTPeson.get().setFecha_hora_inicio(dtoPerson.getFecha_hora_inicio());
+            optionTPeson.get().setFecha_hora_termino(dtoPerson.getFecha_hora_termino());
+
+            personRepository.save(optionTPeson.get());
+
+            return true;
         }
-
-        optionTPeson.get().setFirstName(dtoPerson.getFirstName());
-        optionTPeson.get().setSurName(dtoPerson.getSurName());
-        optionTPeson.get().setDni(dtoPerson.getDni());
-        optionTPeson.get().setGender(dtoPerson.isGender());
-        optionTPeson.get().setBirthDate(dtoPerson.getBirthDate());
-        optionTPeson.get().setEmail(dtoPerson.getEmail());
-        optionTPeson.get().setPassword(dtoPerson.getPassword());
-        optionTPeson.get().setUpdatedAt(dtoPerson.getUpdatedAt());
-
-        personRepository.save(optionTPeson.get());
-
-        return true;
-    }
-
-    public DtoPerson getLogin (String email, String password) {
-        TPerson tPerson = personRepository.getLogin(email, password);
-
-        if (tPerson == null) {
-            return null;
-        }
-
-        DtoPerson dtoPerson = new DtoPerson();
-
-        dtoPerson.setIdPerson(tPerson.getIdPerson());
-        dtoPerson.setFirstName(tPerson.getFirstName());
-        dtoPerson.setCreatedAt(tPerson.getCreatedAt());
-        dtoPerson.setUpdatedAt(tPerson.getUpdatedAt());
-
-        return dtoPerson;
-    }
 
 }

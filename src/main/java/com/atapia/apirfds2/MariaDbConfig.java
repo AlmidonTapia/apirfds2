@@ -15,7 +15,7 @@ public class MariaDbConfig {
         MariaDbPoolDataSource dataSource = new MariaDbPoolDataSource();
 
         try {
-            dataSource.setUrl("jdbc:mariadb://localhost:3306/ds2");
+            dataSource.setUrl("jdbc:mariadb://localhost:3306/ActividadesDB");
             dataSource.setUser("root");
             dataSource.setPassword("1512");
         } catch (SQLException e) {

@@ -19,14 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.atapia.apirfds2.Business.BussinesPerson;
 import com.atapia.apirfds2.Dto.DtoPerson;
 import com.atapia.apirfds2.Services.Person.RequestObject.RequestInsert;
-import com.atapia.apirfds2.Services.Person.RequestObject.RequestLogin;
 import com.atapia.apirfds2.Services.Person.RequestObject.RequestUpdate;
 import com.atapia.apirfds2.Services.Person.ResponseObject.ReponseUpdate;
 import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseDelete;
 import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseGetAll;
-import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseGetData;
 import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseInsert;
-import com.atapia.apirfds2.Services.Person.ResponseObject.ResponseLogin;
 
 import jakarta.validation.Valid;
 
@@ -34,26 +31,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 
 @RestController
-@RequestMapping("person")
+@RequestMapping("actividades")
 public class PersonController {
 
     @Autowired
     private BussinesPerson businessPerson;
 
-    @GetMapping(path = "getdata")
-    public ResponseEntity<ResponseGetData> getdData() {
-        ResponseGetData responseGetData = new ResponseGetData();
-
-        try{
-        responseGetData.firstName = "Saul";
-        responseGetData.surName = "Tapia Almdion";
-        responseGetData.dni = "73534380";
-        }catch(Exception e){
-            e.printStackTrace();
-            
-        }
-        return new ResponseEntity<>(responseGetData, HttpStatus.OK);
-    }
 
     @PostMapping(path = "insert", consumes = "multipart/form-data")
     public ResponseEntity<ResponseInsert> insert(@Valid @ModelAttribute RequestInsert request,
@@ -71,13 +54,9 @@ public class PersonController {
 
 			DtoPerson dtoPerson = new DtoPerson();
 
-			dtoPerson.setFirstName(request.getFirstName());
-			dtoPerson.setSurName(request.getSurName());
-			dtoPerson.setDni(request.getDni());
-			dtoPerson.setGender(request.isGender());
-			dtoPerson.setBirthDate(new SimpleDateFormat("yyyy-mm-dd").parse(request.getBirthDate()));
-			dtoPerson.setEmail(request.getEmail());
-			dtoPerson.setPassword(request.getPassword());
+			dtoPerson.setNombre(request.getNombre());
+			dtoPerson.setFecha_hora_inicio(new SimpleDateFormat("yyyy-mm-dd").parse(request.getFecha_hora_inicio()));
+			dtoPerson.setFecha_hora_termino(new SimpleDateFormat("yyyy-mm-dd").parse(request.getFecha_hora_termino()));
 
 			businessPerson.insert(dtoPerson);
 
@@ -101,17 +80,10 @@ public class PersonController {
 			for (DtoPerson item : listDtoPerson) {
 				Map<String, Object> map = new HashMap<>();
 
-				map.put("idPerson", item.getIdPerson());
-				map.put("firstName", item.getFirstName());
-				map.put("surName", item.getSurName());
-				map.put("dni", item.getDni());
-				map.put("gender", item.isGender());
-				map.put("birthDate", item.getBirthDate());
-				map.put("email", item.getEmail());
-				map.put("password", item.getPassword());
-				map.put("createdAt", item.getCreatedAt());
-				map.put("updatedAt", item.getUpdatedAt());
-
+				map.put("idActividad", item.getIdActividad());
+				map.put("nombre", item.getNombre());
+				map.put("fecha_hora_inicio", item.getFecha_hora_inicio());
+				map.put("fecha_hora_termino", item.getFecha_hora_termino());
 				response.dto.listPerson.add(map);
 
 				response.mo.setSuccess();
@@ -124,12 +96,12 @@ public class PersonController {
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
-	@DeleteMapping(path = "delete/{idPerson}")
-	public ResponseEntity<ResponseDelete> delete(@PathVariable String idPerson) {
+	@DeleteMapping(path = "delete/{idActividad}")
+	public ResponseEntity<ResponseDelete> delete(@PathVariable String idActividad) {
 		ResponseDelete response = new ResponseDelete();
 
 		try {
-			businessPerson.delete(idPerson);
+			businessPerson.delete(idActividad);
 
 			response.mo.addMessage("Eliminación realizada correctamente");
 			response.mo.setSuccess();
@@ -142,7 +114,7 @@ public class PersonController {
 	}
 
     @PostMapping(path = "update", consumes = { "multipart/form-data" })
-	public ResponseEntity<ReponseUpdate> actionUpdate(/* @Valid */@ModelAttribute RequestUpdate requestUpdate,
+	public ResponseEntity<ReponseUpdate> actionUpdate(@ModelAttribute RequestUpdate requestUpdate,
 			BindingResult bindingResult) {
 		ReponseUpdate response = new ReponseUpdate();
 
@@ -155,14 +127,10 @@ public class PersonController {
 				return new ResponseEntity<>(response, HttpStatus.OK);
 			}
             DtoPerson dtoPerson = new DtoPerson();
-            dtoPerson.setIdPerson(requestUpdate.getIdPerson()); // por modificar en principio no se deberian actualizar los id xde
-            dtoPerson.setFirstName(requestUpdate.getFirstName());
-            dtoPerson.setSurName(requestUpdate.getSurName());
-            dtoPerson.setDni(requestUpdate.getDni());
-            dtoPerson.setGender(requestUpdate.isGender());
-            dtoPerson.setBirthDate(new SimpleDateFormat("yyyy-MM-dd").parse(requestUpdate.getBirthDate()));
-			dtoPerson.setEmail(requestUpdate.getEmail());
-			dtoPerson.setPassword(requestUpdate.getPassword());
+            dtoPerson.setIdActividad(requestUpdate.getIdActividad());
+            dtoPerson.setNombre(requestUpdate.getNombre());
+            dtoPerson.setFecha_hora_inicio(new SimpleDateFormat("yyyy-MM-dd").parse(requestUpdate.getFecha_hora_inicio()));
+			dtoPerson.setFecha_hora_termino(new SimpleDateFormat("yyyy-MM-dd").parse(requestUpdate.getFecha_hora_termino()));
 
             businessPerson.update(dtoPerson);
 
@@ -175,29 +143,6 @@ public class PersonController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-	@PostMapping(path = "login", consumes = { "multipart/form-data" })
-	public ResponseEntity<ResponseLogin> actionLogin(@Valid @ModelAttribute RequestLogin soLogin,
-			BindingResult bindingResult) {
-		ResponseLogin responseLogin = new ResponseLogin();
-
-		DtoPerson dtoPerson = businessPerson.getLogin( soLogin.getEmail(), soLogin.getPassword());
-
-		if (dtoPerson == null) {
-			responseLogin.mo.addMessage("Usuario o contraseña incorrecta.");
-			return new ResponseEntity<>(responseLogin, HttpStatus.OK);
-		}
-
-		Map<String, Object> map = new HashMap<>();
-
-		map.put("idPerson", dtoPerson.getIdPerson());
-		map.put("firstName", dtoPerson.getFirstName());
-
-		responseLogin.dto.person = map;
-		responseLogin.mo.addMessage("Bienvenido(a) al sistema.");
-		responseLogin.mo.setSuccess();
-
-		return new ResponseEntity<>(responseLogin, HttpStatus.OK);
-	}
 	
 
 }

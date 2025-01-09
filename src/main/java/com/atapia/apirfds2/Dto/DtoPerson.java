@@ -8,14 +8,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class DtoPerson {
-    private String idPerson;
-    private String firstName;
-    private String surName;
-    private String dni;
-    private boolean gender;
-    private Date birthDate;
-    private String email;
-    private String password;
-    private Date createdAt;
-    private Date updatedAt;
+    private String idActividad;
+    private String nombre;
+    private Date fecha_hora_inicio;
+    private Date fecha_hora_termino;
 }

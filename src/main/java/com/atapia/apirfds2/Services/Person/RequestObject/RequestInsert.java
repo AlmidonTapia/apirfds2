@@ -1,5 +1,6 @@
 package com.atapia.apirfds2.Services.Person.RequestObject;
 
+
 //import java.util.Date;
 
 import lombok.Getter;
@@ -10,11 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class RequestInsert {
-    private String firstName;
-    private String surName;
-    private String dni;
-    private boolean gender;
-    private String birthDate;
-    private String email;
-    private String password;
+    private String nombre;
+    private String fecha_hora_inicio;
+    private String fecha_hora_termino;
 }
