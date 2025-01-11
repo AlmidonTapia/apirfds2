@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class TPerson implements Serializable {
+public class TActividad implements Serializable {
 	@Id
 	@Column(name = "idActividad")
 	private String idActividad;

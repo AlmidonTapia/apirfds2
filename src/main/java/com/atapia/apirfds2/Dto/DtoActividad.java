@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DtoPerson {
+public class DtoActividad {
     private String idActividad;
     private String nombre;
     private Date fecha_hora_inicio;
